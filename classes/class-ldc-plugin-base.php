@@ -59,10 +59,22 @@
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function after_setup_theme(){
-        add_action('admin_notices', array(get_called_class(), 'admin_notices'));
-        add_filter('mb_settings_pages', array(get_called_class(), 'mb_settings_pages'));
-        add_filter('rwmb_meta_boxes', array(get_called_class(), 'rwmb_meta_boxes'));
+        add_action('admin_notices', array(self::$called_class, 'admin_notices'));
+        add_filter('mb_settings_pages', array(self::$called_class, 'mb_settings_pages'));
+        add_filter('rwmb_meta_boxes', array(self::$called_class, 'rwmb_meta_boxes'));
     }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    static public function get_assets_path(){
+        return self::$called_class::get_dir_path() . 'assets/';
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    static public function get_assets_url(){
+        return self::$called_class::get_dir_url() . 'assets/';
+	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -90,20 +102,20 @@
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    static public function get_inc_path(){
+    static public function get_includes_path(){
         return self::$called_class::get_dir_path() . 'includes/';
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    static public function get_inc_url(){
+    static public function get_includes_url(){
         return self::$called_class::get_dir_url() . 'includes/';
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function get_name(){
-        return str_replace('_', ' ', str_replace('LDC_', '', get_called_class()));
+        return str_replace('_', ' ', str_replace('LDC_', '', self::$called_class));
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,7 +154,13 @@
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function get_slug(){
-        return str_replace('_', '-', strtolower(get_called_class()));
+        return str_replace('_', '-', strtolower(self::$called_class));
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    static public function get_version(){
+        return self::$version;
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,7 +174,7 @@
             if(class_exists('Puc_v4_Factory', false)){
                 Puc_v4_Factory::buildUpdateChecker(self::$called_class::get_github_url(), self::$file, self::$called_class::get_slug());
             }
-            add_action('after_setup_theme', array(get_called_class(), 'after_setup_theme'));
+            add_action('after_setup_theme', array(self::$called_class, 'after_setup_theme'));
             return true;
         }
         return false;
