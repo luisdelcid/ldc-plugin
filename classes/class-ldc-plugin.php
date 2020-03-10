@@ -12,8 +12,11 @@
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function init($file = '', $version = ''){
-        if(!class_exists('Puc_v4_Factory', false)){
-            require_once(plugin_dir_path($file) . 'includes/plugin-update-checker-4.9/plugin-update-checker.php');
+        $plugin_update_checker = plugin_dir_path($file) . 'includes/plugin-update-checker-4.9/plugin-update-checker.php';
+        if(is_file($plugin_update_checker)){
+            if(!class_exists('Puc_v4_Factory', false)){
+                require_once($plugin_update_checker);
+            }
         }
         if(parent::init($file, $version)){
             self::add_setting(self::get_slug(), array(

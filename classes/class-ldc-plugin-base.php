@@ -161,6 +161,7 @@
     static public function mb_settings_pages($settings_pages){
         if(self::$settings_page){
             ksort(self::$settings_page['tabs']);
+            $general_id = sanitize_title(__('General'));
             if(!empty(self::$settings_page['tabs'][$general_id])){
                 $general = self::$settings_page['tabs'][$general_id];
                 unset(self::$settings_page['tabs'][$general_id]);
@@ -168,7 +169,7 @@
                     $general_id => $general,
                 ), self::$settings_page['tabs']);
             }
-            $settings_pages[] = $settings_page;
+            $settings_pages[] = self::$settings_page;
         }
         return $settings_pages;
 	}
