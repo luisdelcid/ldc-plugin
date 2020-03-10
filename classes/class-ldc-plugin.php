@@ -13,7 +13,7 @@
 
     static public function init($file = '', $version = ''){
         if(!class_exists('Puc_v4_Factory', false)){
-            require_once(plugin_dir_path(__FILE__) . 'includes/plugin-update-checker-4.9/plugin-update-checker.php');
+            require_once(plugin_dir_path($file) . 'includes/plugin-update-checker-4.9/plugin-update-checker.php');
         }
         if(parent::init($file, $version)){
             self::add_setting(self::get_slug(), array(

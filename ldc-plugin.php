@@ -10,7 +10,7 @@
  * Plugin Name: LDC Plugin
  * Plugin URI: https://luisdelcid.com
  * Text Domain: ldc-plugin
- * Version: 0.3.10.2
+ * Version: 0.3.10.3
  */
 
     defined('ABSPATH') or die('No script kiddies please!');
@@ -19,6 +19,6 @@
         require_once(plugin_dir_path(__FILE__) . 'classes/class-ldc-plugin-base.php');
         if(!class_exists('LDC_Plugin', false)){
             require_once(plugin_dir_path(__FILE__) . 'classes/class-ldc-plugin.php');
-            LDC_Plugin::init(__FILE__, '0.3.10.2');
+            LDC_Plugin::init(__FILE__, '0.3.10.3');
         }
     }
