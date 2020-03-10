@@ -5,7 +5,7 @@
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    private static $admin_notices = array(), $file = '', $meta_boxes = array(), $settings_page = array(), $version = '';
+    private static $admin_notices = array(), $called_class = '', $file = '', $meta_boxes = array(), $settings_page = array(), $version = '';
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -18,12 +18,14 @@
     static public function add_setting($id = '', $setting = array(), $tab = ''){
         $id = sanitize_title($id);
         if($id){
-            self::add_settings_page();
+            if(!self::$settings_page){
+                self::$settings_page = self::$called_class::get_settings_page();
+            }
             if(!$tab){
                 $tab = __('General');
             }
             $tab = wp_strip_all_tags($tab);
-            $tab_id = self::get_slug() . '-' . sanitize_title($tab);
+            $tab_id = self::$called_class::get_slug() . '-' . sanitize_title($tab);
             if(empty(self::$settings_page['tabs'][$tab_id])){
 				self::$settings_page['tabs'][$tab_id] = $tab;
 			}
@@ -31,7 +33,7 @@
 				self::$meta_boxes[$tab_id] = array(
 					'fields' => array(),
 					'id' => $tab_id,
-					'settings_pages' => self::get_slug(),
+					'settings_pages' => self::$called_class::get_slug(),
 					'tab' => $tab_id,
 					'title' => $tab,
 				);
@@ -83,19 +85,19 @@
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function get_github_url(){
-        return 'https://github.com/luisdelcid/' . self::get_slug();
+        return 'https://github.com/luisdelcid/' . self::$called_class::get_slug();
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function get_inc_path(){
-        return self::get_dir_path() . 'includes/';
+        return self::$called_class::get_dir_path() . 'includes/';
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function get_inc_url(){
-        return self::get_dir_url() . 'includes/';
+        return self::$called_class::get_dir_url() . 'includes/';
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,7 +109,7 @@
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function get_option_name(){
-        return str_replace('-', '_', self::get_slug());
+        return str_replace('-', '_', self::$called_class::get_slug());
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -116,9 +118,25 @@
         if(function_exists('rwmb_meta')){
             return rwmb_meta($id, array(
                 'object_type' => 'setting',
-            ), self::get_option_name());
+            ), self::$called_class::get_option_name());
         }
         return false;
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    static public function get_settings_page(){
+        return array(
+            'columns' => 1,
+            'id' => self::$called_class::get_slug(),
+            'menu_title' => self::$called_class::get_name(),
+            'option_name' => self::$called_class::get_option_name(),
+            'page_title' => self::$called_class::get_name() . ' &#8212; ' . __('Settings'),
+            'parent' => 'ldc-plugin',
+            'style' => 'no-boxes',
+            'tabs' => array(),
+            'tab_style' => 'left',
+        );
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,11 +148,13 @@
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static public function init($file = '', $version = ''){
-        if(is_file($file) and version_compare($version, '0') > 0 and is_subclass_of(get_called_class(), get_class())){
+        $called_class = get_called_class();
+        if(is_file($file) and version_compare($version, '0') > 0 and is_subclass_of($called_class, get_class())){
+            self::$called_class = $called_class;
             self::$file = $file;
             self::$version = $version;
             if(class_exists('Puc_v4_Factory', false)){
-                Puc_v4_Factory::buildUpdateChecker(self::get_github_url(), self::$file, self::get_slug());
+                Puc_v4_Factory::buildUpdateChecker(self::$called_class::get_github_url(), self::$file, self::$called_class::get_slug());
             }
             add_action('after_setup_theme', array(get_called_class(), 'after_setup_theme'));
             return true;
@@ -148,7 +168,7 @@
         if(is_admin()){
             $current_screen = get_current_screen();
             if($current_screen){
-                if(str_replace('ldc-plugin_page_', '', $screen->id) === self::get_slug()){
+                if(str_replace('ldc-plugin_page_', '', $screen->id) === self::$called_class::get_slug()){
                     return true;
                 }
             }
@@ -186,24 +206,6 @@
             }
         }
         return $meta_boxes;
-	}
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    static public function add_settings_page(){
-        if(!self::$settings_page){
-            self::$settings_page = array(
-                'columns' => 1,
-                'id' => self::get_slug(),
-                'menu_title' => self::get_name(),
-                'option_name' => self::get_option_name(),
-                'page_title' => self::get_name() . ' &#8212; ' . __('Settings'),
-                'parent' => 'ldc',
-                'style' => 'no-boxes',
-                'tabs' => array(),
-                'tab_style' => 'left',
-            );
-        }
 	}
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
