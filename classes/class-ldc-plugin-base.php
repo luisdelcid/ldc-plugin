@@ -5,7 +5,7 @@
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    private static $file = '', $meta_boxes = array(), $settings_page = array(), $version = '';
+    private static $admin_notices = array(), $file = '', $meta_boxes = array(), $settings_page = array(), $version = '';
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
