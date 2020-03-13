@@ -131,3 +131,135 @@
 			return 0;
 		}
 	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_is_response')){
+		function ldc_is_response($response = array()){
+            if(is_array($response) and isset($response['data'], $response['message'], $response['success'])){
+                return true;
+            }
+			return false;
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_is_success')){
+		function ldc_is_success($code = 0){
+			if($code == 200){
+				return true;
+			}
+			return false;
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_maybe_json_decode_response')){
+		function ldc_maybe_json_decode_response($response = array(), $assoc = false, $depth = 512, $options = 0){
+			if(ldc_is_response($response)){
+                if(preg_match('/^\{\".*\"\:.*\}$/', $response['data'])){
+                    $data = json_decode($response['data'], $assoc, $depth, $options);
+    				if(json_last_error() == JSON_ERROR_NONE){
+    					$response['data'] = $data;
+    				} else {
+    					$response['message'] = json_last_error_msg();
+    					$response['success'] = false;
+    				}
+                }
+			}
+			return $response;
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_maybe_merge_response')){
+		function ldc_maybe_merge_response($response = array()){
+            if(ldc_is_response($response)){
+                $data = $response['data'];
+                if(ldc_is_response($data)){
+                    $data = ldc_maybe_json_decode_response($data);
+                    $response['data'] = $data['data'];
+                    $response['message'] = $data['message'];
+                    $response['success'] = $data['success'];
+                }
+            }
+            return $response;
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_parse_response')){
+		function ldc_parse_response($response = null){
+			if(is_a($response, 'Requests_Exception')){
+				return ldc_response_error('', $response->getMessage());
+			} elseif(is_a($response, 'Requests_Response')){
+				$response_body = $response->body;
+				$response_code = $response->status_code;
+				$response_message = get_status_header_desc($response_code);
+				if(ldc_is_success($response_code)){
+					return ldc_response_success($response_body, $response_message);
+				} else {
+					return ldc_response_error($response_body, $response_message);
+				}
+			} elseif(is_wp_error($response)){
+				return ldc_response_error('', $response->get_error_message());
+			} else {
+				$response_body = wp_remote_retrieve_body($response);
+				$response_code = wp_remote_retrieve_response_code($response);
+                if($response_body and $response_code){
+                    $response_message = wp_remote_retrieve_response_message($response);
+    				if(!$response_message){
+    					$response_message = get_status_header_desc($response_code);
+    				}
+    				if(ldc_is_success($response_code)){
+    					return ldc_response_success($response_body, $response_message);
+    				} else {
+    					return ldc_response_error($response_body, $response_message);
+    				}
+                }
+			}
+            return ldc_response_error('', __('Invalid object type.'));
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	if(!function_exists('ldc_response')){
+		function ldc_response($data = '', $message = '', $success = false){
+			if(!$message){
+                if($success){
+                    $message = 'OK';
+                } else {
+                    $message = __('Something went wrong.');
+                }
+			}
+            $response = array(
+				'data' => $data,
+				'message' => $message,
+				'success' => $success,
+			);
+            $response = ldc_maybe_json_decode_response($response);
+            $response = ldc_maybe_merge_response($response);
+			return $response;
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	if(!function_exists('ldc_response_error')){
+		function ldc_response_error($data = '', $message = ''){
+			return ldc_response($data, $message, false);
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	if(!function_exists('ldc_response_success')){
+		function ldc_response_success($data = '', $message = ''){
+			return ldc_response($data, $message, true);
+		}
+	}
