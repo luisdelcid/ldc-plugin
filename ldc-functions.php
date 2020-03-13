@@ -134,6 +134,17 @@
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    if(!function_exists('ldc_is_mysql_date')){
+		function ldc_is_mysql_date($pattern = ''){
+            if(preg_match('/^\d{4}-\d{2}-\d{2}\s{1}\d{2}:\d{2}:\d{2}$/', $pattern)){
+                return true;
+            }
+			return false;
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     if(!function_exists('ldc_is_response')){
 		function ldc_is_response($response = array()){
             if(is_array($response) and isset($response['data'], $response['message'], $response['success'])){
@@ -159,7 +170,7 @@
     if(!function_exists('ldc_maybe_json_decode_response')){
 		function ldc_maybe_json_decode_response($response = array(), $assoc = false, $depth = 512, $options = 0){
 			if(ldc_is_response($response)){
-                if(preg_match('/^\{\".*\"\:.*\}$/', $response['data'])){
+                if(is_string($response['data']) and preg_match('/^\{\".*\"\:.*\}$/', $response['data'])){
                     $data = json_decode($response['data'], $assoc, $depth, $options);
     				if(json_last_error() == JSON_ERROR_NONE){
     					$response['data'] = $data;
