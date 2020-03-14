@@ -71,6 +71,18 @@
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    if(!function_exists('ldc_clone_role')){
+		function ldc_clone_role($source_role = '', $destination_role = '', $display_name = ''){
+            if($source_role and $destination_role and $display_name){
+                $role = get_role($source_role);
+                $capabilities = $role->capabilities;
+                add_role($destination_role, $display_name, $capabilities);
+            }
+		}
+	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     if(!function_exists('ldc_format_admin_notice')){
 		function ldc_format_admin_notice($admin_notice = '', $class = '', $is_dismissible = false){
             if($admin_notice){
