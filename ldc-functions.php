@@ -170,7 +170,8 @@
 
     if(!function_exists('ldc_is_success')){
 		function ldc_is_success($code = 0){
-			if($code == 200){
+            $code = (int) $code;
+			if($code >= 200 and $code < 300){
 				return true;
 			}
 			return false;
