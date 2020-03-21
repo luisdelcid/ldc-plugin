@@ -287,3 +287,163 @@
 			return ldc_response($data, $message, true);
 		}
 	}
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //
+    // Request method. Accepts 'GET', 'POST', 'HEAD', 'PUT', 'DELETE', 'TRACE', 'OPTIONS', or 'PATCH'.
+    //
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_get')){
+        function ldc_remote_get($url, $args = array()){
+            $args['method'] = 'GET';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_post')){
+        function ldc_remote_post($url, $args = array()){
+            $args['method'] = 'POST';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_head')){
+        function ldc_remote_head($url, $args = array()){
+            $args['method'] = 'HEAD';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_put')){
+        function ldc_remote_put($url, $args = array()){
+            $args['method'] = 'PUT';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_delete')){
+        function ldc_remote_delete($url, $args = array()){
+            $args['method'] = 'DELETE';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_trace')){
+        function ldc_remote_trace($url, $args = array()){
+            $args['method'] = 'TRACE';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_options')){
+        function ldc_remote_options($url, $args = array()){
+            $args['method'] = 'OPTIONS';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_remote_patch')){
+        function ldc_remote_patch($url, $args = array()){
+            $args['method'] = 'PATCH';
+            $http = _wp_http_get_object();
+            return $http->request($url, $args);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_offset_or_tz')){
+        function ldc_offset_or_tz($offset_or_tz = ''){
+            if(is_numeric($offset_or_tz)){
+                return array(
+                    'gmt_offset' => $offset_or_tz,
+                    'timezone_string' => '',
+                );
+            } else {
+                if(preg_match('/^UTC[+-]/', $offset_or_tz)){
+                    return array(
+                        'gmt_offset' => intval(preg_replace('/UTC\+?/', '', $offset_or_tz)),
+                        'timezone_string' => '',
+                    );
+                } else {
+                    if(in_array($offset_or_tz, timezone_identifiers_list())){
+                        return array(
+                            'gmt_offset' => 0,
+                            'timezone_string' => $offset_or_tz,
+                        );
+                    } else {
+                        return array(
+                            'gmt_offset' => 0,
+                            'timezone_string' => 'UTC',
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_timezone_string')){
+        function ldc_timezone_string($offset_or_tz = ''){
+            $offset_or_tz = ldc_offset_or_tz($offset_or_tz);
+            $timezone_string = $offset_or_tz['timezone_string'];
+            if($timezone_string){
+                return $timezone_string;
+            }
+            $offset = (float) $offset_or_tz['gmt_offset'];
+            $hours = (int) $offset;
+            $minutes = ($offset - $hours);
+            $sign = ($offset < 0) ? '-' : '+';
+            $abs_hour = abs($hours);
+            $abs_mins = abs($minutes * 60);
+            $tz_offset = sprintf('%s%02d:%02d', $sign, $abs_hour, $abs_mins);
+            return $tz_offset;
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_timezone')){
+        function ldc_timezone($offset_or_tz = ''){
+            return new DateTimeZone(ldc_timezone_string($offset_or_tz));
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_current_time')){
+        function ldc_current_time($type = 'U', $offset_or_tz = ''){
+            if('timestamp' === $type){
+                $type = 'U';
+            }
+            if('mysql' === $type){
+                $type = 'Y-m-d H:i:s';
+            }
+            $timezone = $offset_or_tz ? ldc_timezone($offset_or_tz) : wp_timezone();
+            $datetime = new DateTime('now', $timezone);
+            return $datetime->format($type);
+        }
+    }
