@@ -434,6 +434,7 @@
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    // If $offset_or_tz is an empty string, the output is adjusted with the GMT offset in the WordPress option.
     if(!function_exists('ldc_current_time')){
         function ldc_current_time($type = 'U', $offset_or_tz = ''){
             if('timestamp' === $type){
@@ -445,5 +446,17 @@
             $timezone = $offset_or_tz ? ldc_timezone($offset_or_tz) : wp_timezone();
             $datetime = new DateTime('now', $timezone);
             return $datetime->format($type);
+        }
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_date_convert')){
+        function ldc_date_convert($string = '', $fromtz = '', $totz = '', $format = 'Y-m-d H:i:s'){
+            $datetime = date_create($string, ldc_timezone($fromtz));
+            if(false === $datetime){
+                return gmdate($format, 0);
+            }
+            return $datetime->setTimezone(ldc_timezone($totz))->format($format);
         }
     }
