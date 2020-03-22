@@ -460,3 +460,39 @@
             return $datetime->setTimezone(ldc_timezone($totz))->format($format);
         }
     }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_authenticate_username')){
+    	function ldc_authenticate_username($user = null, $username = ''){
+            if($user !== null){
+                return $user;
+            }
+            $user = get_user_by('login', $username);
+            if($user){
+                return $user;
+            }
+            return null;
+    	}
+    }
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if(!function_exists('ldc_signon')){
+    	function ldc_signon($user_login = '', $remember = false){
+            if(is_user_logged_in()){
+                return false;
+            }
+            add_filter('authenticate', 'ldc_authenticate_username', 10, 2);
+    		$user = wp_signon(array(
+    			'user_login' => $user_login,
+                'user_password' => '',
+                'remember' => $remember,
+    		));
+    		remove_filter('authenticate', 'ldc_authenticate_username', 10, 2);
+            if($user instanceof WP_User){
+                return true;
+            }
+    		return false;
+        }
+    }
