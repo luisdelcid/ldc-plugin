@@ -13,7 +13,11 @@ if(!class_exists('ldc_github')){
 			$option = 'ldc_github_library_' . md5($owner . '-' . $repo . '-' . $release);
 			$library = get_option($option);
 			if($library){
-				return $library;
+				if(is_dir($library['dir'])){
+					return $library;
+				} else {
+					delete_option($option);
+				}
 			}
             $url = 'https://api.github.com/repos/' . $owner . '/' . $repo . '/releases/' . $release;
             $response = ldc()->remote($url)->get();

@@ -637,9 +637,13 @@ if(!class_exists('ldc')){
 		function require($url = '', $dir = ''){
 			$md5 = md5($url);
 			$option = 'ldc_library_' . $md5;
-			$library = get_option($option);
+			$library = get_option($option, []);
 			if($library){
-				return $library;
+				if(is_dir($library['dir'])){
+					return $library;
+				} else {
+					delete_option($option);
+				}
 			}
 			$download_dir = $this->download_dir();
             if(is_wp_error($download_dir)){

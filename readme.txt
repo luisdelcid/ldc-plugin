@@ -5,7 +5,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Requires PHP: 5.6
-Stable tag: 1.4.5.2
+Stable tag: 1.4.5.3
 Tags: ldc
 Tested up to: 5.7
 
