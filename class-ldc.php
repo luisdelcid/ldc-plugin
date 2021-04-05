@@ -771,7 +771,7 @@ if(!class_exists('ldc')){
 		public function serialize_closure($data = null){
 			if($data instanceof Closure){
 				if(!class_exists('Opis\Closure\SerializableClosure')){
-					$library = ldc('github')->require('opis', 'closure');
+					$library = ldc()->require('https://github.com/opis/closure/archive/refs/tags/3.6.1.zip', 'closure-3.6.1');
 					if(is_wp_error($library)){
 						return $library;
 					}

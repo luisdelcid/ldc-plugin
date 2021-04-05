@@ -12,7 +12,7 @@ Plugin URI: https://github.com/luisdelcid/ldc-plugin
 Requires at least: 5.0
 Requires PHP: 5.6
 Text Domain: ldc
-Version: 1.4.5
+Version: 1.4.5.1
 */
 
 if(defined('ABSPATH')){
