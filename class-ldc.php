@@ -179,7 +179,7 @@ if(!class_exists('ldc')){
 
 		function build_update_checker(...$args){
 			if(!class_exists('Puc_v4_Factory')){
-				$library = ldc('github')->require('YahnisElsts', 'plugin-update-checker');
+				$library = ldc()->require('https://github.com/YahnisElsts/plugin-update-checker/archive/refs/tags/v4.11.zip', 'plugin-update-checker-4.11');
 				if(is_wp_error($library)){
 					return null;
 				}
