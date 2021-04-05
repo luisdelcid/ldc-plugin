@@ -6,7 +6,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Requires PHP: 5.6
 Stable tag: 0.4.4
-Tags: ldc, plugin
+Tags: ldc
 Tested up to: 5.7
 
 LDC
