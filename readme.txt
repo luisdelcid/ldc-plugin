@@ -1,20 +1,20 @@
-=== LDC Plugin ===
+=== LDC ===
 Contributors: @luisdelcid
-Donate link: https://luisdelcid.com
-Tags: ldc, plugin
-Requires at least: 5.0
-Tested up to: 5.3.2
-Stable tag: 0.3.13.3
-Requires PHP: 5.6
+Donate link: https://github.com/luisdelcid
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Requires at least: 5.0
+Requires PHP: 5.6
+Stable tag: 0.4.4
+Tags: ldc, plugin
+Tested up to: 5.7
 
-LDC Plugin
+LDC
 
 == Description ==
 
-Just another WordPress plugin.
+A collection of useful ldc()->functions for your WordPress theme's functions.php.
 
 == Changelog ==
 
-Visit my [website](https://luisdelcid.com "luisdelcid.com") for up-to-date information.
+[Changelog »](https://github.com/luisdelcid/ldc-plugin "LDC")
